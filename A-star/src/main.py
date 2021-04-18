@@ -1,6 +1,7 @@
 import pygame as pg
 import constants as cts
-from sprite import Block
+from Entities import Block, Grid
+from listeners import listen
 import colors
 
 def init():
@@ -16,50 +17,31 @@ def init():
                 ])
     return win, clock, blocks
 
-def listen(events):
-    global blocks, win
-    clicked_blocks = []
+def get_grid():
+    return grid
 
-    if any([event.type == pg.MOUSEBUTTONUP for event in events]):
-        for row in blocks:
-            for block in row:
-                if block.is_clicked(win):
-                    clicked_blocks.append(block)
-
-    for block in clicked_blocks:
-        block.color = (
-            colors.blocked 
-            if block.color==colors.passable 
-            else colors.passable
-        )
 
 def draw(events):
-    global win, blocks
-    for row in blocks:
+    for row in grid.blocks:
         for block in row:
-            block.redraw(win)
+            block.redraw(grid.win)
 
     pg.display.update()
 
 
+grid = Grid(*init())
 
-
-win, clock, blocks = init()
 running = True
 
 while running:
-    clock.tick(60)
+    grid.clock.tick(60)
     events = pg.event.get()
     for event in events:
         if event.type == pg.QUIT:
             running = False
 
-    listen(events)
-    draw(blocks)
+    listen(events, grid)
+    draw(grid.blocks)
 
 
 pg.quit() # end the programm
-
-
-
-

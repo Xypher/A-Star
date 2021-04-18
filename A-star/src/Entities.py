@@ -1,6 +1,18 @@
 import pygame as pg
 import constants as cts
 
+
+class Grid:
+    def __init__(self, win, clock, blocks):
+        self.win = win
+        self.clock = clock
+        self.blocks = blocks
+        self.last_mouse_button_pressed = -1
+        self.source = (-1, -1)
+        self.dest = (-1, -1)
+
+
+
 class Block:
     def __init__(self, i, j, color, win):
         self.i = i

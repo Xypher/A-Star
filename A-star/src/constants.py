@@ -7,5 +7,3 @@ blocks_count=20
 offset=10
 
 INF = int(1e12)
-
-
