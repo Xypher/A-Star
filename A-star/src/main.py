@@ -12,13 +12,10 @@ def init():
     blocks = []
     for i in range(cts.blocks_count):
             blocks.append([
-                    Block(i, j, colors.passable, win) 
+                    Block(i, j, cts.INF, colors.passable, win) 
                     for j in range(cts.blocks_count)
                 ])
     return win, clock, blocks
-
-def get_grid():
-    return grid
 
 
 def draw(events):
@@ -29,18 +26,38 @@ def draw(events):
     pg.display.update()
 
 
-grid = Grid(*init())
+grid: Grid = Grid(*init())
 
 running = True
+animation_running = False
+animation = None
 
 while running:
-    grid.clock.tick(60)
+    grid.clock.tick(30)
     events = pg.event.get()
+    keys = pg.key.get_pressed()
+
     for event in events:
         if event.type == pg.QUIT:
             running = False
 
-    listen(events, grid)
+        if keys[pg.K_SPACE] and not animation_running:
+            animation_running = True
+            grid.init()
+            animation = grid.iter()
+
+        if keys[pg.K_r]:
+            animation_running = False
+            grid.reset()
+
+    if animation_running == True:
+        try: next(animation)
+        except StopIteration:
+            animation_running = False
+            animation = None
+
+    listen(events, grid, keys)
+
     draw(grid.blocks)
 
 

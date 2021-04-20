@@ -14,7 +14,6 @@ def handle_mouse_click(grid, events):
     clicked_blocks = []
 
     get_latest_mouse_button_click(grid)
-    print(grid.last_mouse_button_pressed)
     if any([event.type == pg.MOUSEBUTTONUP for event in events]):
         for row in grid.blocks:
             for block in row:
@@ -57,5 +56,8 @@ def handle_mouse_click(grid, events):
                 block.color = colors.passable
 
 
-def listen(events, grid):
+def handle_key_board_clicks(events, grid, keys):
+    pass
+
+def listen(events, grid, keys):
     handle_mouse_click(grid, events)

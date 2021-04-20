@@ -1,6 +1,6 @@
 import pygame as pg
 
-pg.init()
+"""pg.init()
 screen_width = 1024
 screen_height = 768
 win = pg.display.set_mode((screen_width, screen_height))
@@ -97,4 +97,12 @@ while run:
     #pg.display.update()
     draw()
 
-pg.quit()
+pg.quit()"""
+
+
+def yld(n):
+    for i in range(n):
+        yield i
+
+
+

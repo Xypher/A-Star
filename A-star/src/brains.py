@@ -1,27 +1,10 @@
 import heapq as hq
 from constants import INF
+from Entities import Node, Block
 
-class node:
-    def __init__(self, r: int, c: int, f: int):
-        self.r = r; self.c = c; self.f = f
-    
-    def __lt__(self, other):
-        return self.f < other.f
 
-    def __eq__(self, other):   
-        return (self.r, self.c) == (other.r, other.c)
+def init_grid(grid: list[list[Block]]):
 
-    def __ne__(self, other):
-            return self.r != other.r or self.c != other.c
-
-    def __hash__(self):
-        return hash(self.r) ^ hash(self.c)
-
-    def __str__(self):
-        return str((self.r, self.c))
-
-    def __repr__(self):
-        return str((self.r, self.c))
 
 def valid(grid, cr, cc):
     return (cr >= 0 and
@@ -51,7 +34,7 @@ def a_star(grid: list[list[bool]] , src: (int, int), end: (int, int), h):
 
     prev = []; dist = []; f = []
     for i in range(len(grid)):
-        prev.append([node(-1, -1, -1)] * len(grid[0]))
+        prev.append([Node(-1, -1, -1)] * len(grid[0]))
         dist.append([INF] * len(grid[0]))
         f.append([INF] * len(grid[0]))
 
@@ -67,15 +50,15 @@ def a_star(grid: list[list[bool]] , src: (int, int), end: (int, int), h):
             for j in moves:
                 if (i, j) == (0, 0) or not valid(grid, curr.r + i, curr.c + j):
                     continue
-                nei =  node(curr.r + i, curr.c + j, -1) # neighboring node
-                #print(f"current: {curr.r, curr.c} , child: {nei.r, nei.c}")
+                nei =  Node(curr.r + i, curr.c + j, -1) # neighboring Node
+
                 d = dist[curr.r][curr.c] + 1
                 if  d < dist[nei.r][nei.c]:
                     prev[nei.r][nei.c] = curr
                     dist[nei.r][nei.c] = d
                     f[nei.r][nei.c] = d + h(nei , end) 
                     if nei not in searched:
-                        hq.heappush(queue, node(nei.r, nei.c, f[nei.r][nei.c]))
+                        hq.heappush(queue, Node(nei.r, nei.c, f[nei.r][nei.c]))
 
         
     if dist[end.r][end.c] == INF:
@@ -89,10 +72,7 @@ grid = [
     [1, 1, 0, 0, 1],
     [1, 1, 1, 1, 1],
 ]
-src= node(0, 0, INF)
-end = node(4, 4, INF)
+src= Node(0, 0, INF)
+end = Node(4, 4, INF)
 h = lambda x, y: max( abs(x.r - y.r), abs(x.c- y.c) )
 print(a_star(grid, src, end, h))
-
-
-
