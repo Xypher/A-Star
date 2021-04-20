@@ -99,10 +99,44 @@ while run:
 
 pg.quit()"""
 
+import threading as thd
+import time
 
-def yld(n):
-    for i in range(n):
-        yield i
+def summation(n: int):
+    global sum
+    sum = 0
+    for i in range(1, n+1):
+        sum += i
+
+    
+
+def product(n: int):
+    global prod
+    prod = 1
+    for i in range(1, n+1):
+        prod *= i
+
+
+def sync():
+    summation(int(1e5))
+    product(int(1e5))
+    print(sum, len(str(prod)))
+
+def parallel():
+    t1 = thd.Thread(target=summation, args=(int(1e5),))
+    t2 = thd.Thread(target=product, args=(int(1e5),))
+    
+    t1.start()
+    t2.start()
+    
+    t1.join()
+    t2.join()
+
+    print(sum, len(str(prod)))
+
+start_time = time.time()
+parallel()
+print("execution time is:  %s seconds" % (time.time() - start_time))
 
 
 
