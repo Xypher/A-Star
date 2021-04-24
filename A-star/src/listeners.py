@@ -10,7 +10,7 @@ def get_latest_mouse_button_click(grid):
             return
 
 
-def handle_mouse_click(grid, events):
+def handle_mouse(grid, events):
     clicked_blocks = []
 
     get_latest_mouse_button_click(grid)
@@ -56,8 +56,8 @@ def handle_mouse_click(grid, events):
                 block.color = colors.passable
 
 
-def handle_key_board_clicks(events, grid, keys):
+def handle_keyboard(events, grid, keys):
     pass
 
 def listen(events, grid, keys):
-    handle_mouse_click(grid, events)
+    handle_mouse(grid, events)

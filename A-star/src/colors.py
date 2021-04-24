@@ -5,3 +5,4 @@ path=(0,255,0) # green
 current=(255, 255, 255) #white
 dest=(255,69,0) # redish orange
 source = (30, 30, 30)
+background = (125,125,125) # grey

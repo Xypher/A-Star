@@ -13,7 +13,7 @@ class Block:
         self.y = c * (cts.block_width + cts.offset)
         self.color = color
         self.rect = pg.draw.rect(win, color, (self.x, self.y, cts.block_width, cts.block_height))
-    
+
     def redraw(self, win):
         self.rect=pg.draw.rect(win, self.color, (self.x, self.y, cts.block_width, cts.block_height))
     
@@ -28,6 +28,8 @@ class Block:
         return self.f < other.f
 
     def __eq__(self, other):   
+        if not isinstance(other, Block):
+            return False
         return (self.r, self.c) == (other.r, other.c)
 
     def __ne__(self, other):
@@ -54,6 +56,11 @@ class Grid:
         self.dest = (-1, -1)
         self.path = self.prev = self.dist = self.searched = None
 
+        self.animation_running = False
+        self.animation_finished = False
+        self.pause = False
+        self.animation_speed = 60
+
 
     def heuristic(self, block1, block2):
         return max( abs(block1.r - block2.r), abs(block1.c- block2.c) )
@@ -77,12 +84,21 @@ class Grid:
             self.path.append( current )
             current = self.prev[current.r][current.c]
 
+        self.path.append(current)
+
 
     def reset(self):
         for row in self.blocks:
             for block in row:
+                block.color = colors.passable if block.color != colors.blocked else block.color
+        self.source = self.dest = (-1, -1)
+
+    def clear(self):
+        for row in self.blocks:
+            for block in row:
                 block.color = colors.passable
         self.source = self.dest = (-1, -1)
+
 
     def init(self):
         self.source = self.blocks[self.source[0]][self.source[1]]
@@ -105,8 +121,6 @@ class Grid:
         self.source.f = self.heuristic(self.source, self.dest)
     
 
-    
-    #returns true if done
     def iter(self):
         while len(self.queue) > 0:
             curr = hq.heappop(self.queue)

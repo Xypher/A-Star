@@ -1,9 +1,18 @@
-screen_width=1190
-screen_height=900
-screen_height=768
-block_width=30
-block_height=30
-blocks_count=20
-offset=5
+def init(_blocks_count):
+    global screen_width, screen_height
+    global block_width, block_height
+    global blocks_count
+    global offset
+    global INF
 
-INF = int(1e12)
+
+    screen_width = 1280
+    screen_height =910
+    block_width, block_height = 55, 55
+    blocks_count = _blocks_count
+    offset = 2
+
+
+
+    INF = int(1e12)
+
