@@ -1,5 +1,6 @@
 import pygame as pg
 import colors
+import threading
 
 
 def get_latest_mouse_button_click(grid):
@@ -56,8 +57,75 @@ def handle_mouse(grid, events):
                 block.color = colors.passable
 
 
-def handle_keyboard(events, grid, keys):
-    pass
+def animate(grid):
+    
+    grid.init() # initialize data structures for the algorithm
+    animation = grid.iter()
+    clock = pg.time.Clock()
+    while grid.animation_running:
+        if grid.pause: continue
 
-def listen(events, grid, keys):
+        clock.tick(grid.animation_speed)
+        
+        try: next(animation)
+        except StopIteration: break
+
+    
+    grid.animation_running = False
+    grid.animation_finished = True
+
+
+def start_animation(grid):
+    grid.animation_running = True
+    grid.pause = False
+    t = threading.Thread(target=animate, args=(grid,))
+    t.daemon=True
+    t.start()
+    return t
+
+def reset(grid):
+
+    animation_was_running = grid.animation_running
+    grid.animation_running = False
+    if 't' in globals() and animation_was_running:
+        t.join()      
+    grid.reset()
+
+def pause_animation(grid):
+    grid.pause = not grid.pause
+
+
+def clear(grid):
+    animation_was_running = grid.animation_running
+    grid.animation_running = False
+    if 't' in globals() and animation_was_running:
+        t.join()    
+    grid.clear()
+
+
+
+def handle_keyboard(grid, events, keys):
+    global t
+    for event in events:
+        if event.type == pg.KEYDOWN:
+            if keys[pg.K_SPACE] and not grid.animation_running:
+                t = start_animation(grid)
+
+            if keys[pg.K_r]:
+                reset(grid)
+
+            if keys[pg.K_c]:
+                clear(grid)
+
+            if keys[pg.K_p] and grid.animation_running:
+                pause_animation(grid)
+
+
+def listen(grid, sidebar, events, keys):
     handle_mouse(grid, events)
+    handle_keyboard(grid, events, keys)
+    sidebar.listen(events)
+
+    if grid.animation_finished and 't' in globals():
+        grid.animation_finished = False
+        t.join()

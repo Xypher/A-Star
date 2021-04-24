@@ -1,7 +1,9 @@
 import pygame as pg
+import pygame_widgets as pgw
 import constants as cts
 import heapq as hq
 import colors
+from listeners import reset, clear
 
 
 class Block:
@@ -14,7 +16,7 @@ class Block:
         self.color = color
         self.rect = pg.draw.rect(win, color, (self.x, self.y, cts.block_width, cts.block_height))
 
-    def redraw(self, win):
+    def draw(self, win):
         self.rect=pg.draw.rect(win, self.color, (self.x, self.y, cts.block_width, cts.block_height))
     
     def is_clicked(self, win):
@@ -47,10 +49,10 @@ class Block:
 
 
 class Grid:
-    def __init__(self, win, clock, blocks):
+    def __init__(self, win, clock, count):
+        self.count=count
         self.win = win
         self.clock = clock
-        self.blocks = blocks
         self.last_mouse_button_pressed = -1
         self.source = (-1, -1)
         self.dest = (-1, -1)
@@ -59,8 +61,23 @@ class Grid:
         self.animation_running = False
         self.animation_finished = False
         self.pause = False
-        self.animation_speed = 60
+        self.animation_speed = 45
 
+        self.build()
+
+    def build(self):
+        self.blocks = []
+        for i in range(self.count):
+            self.blocks.append([
+                    Block(i, j, cts.INF, colors.passable, self.win) 
+                    for j in range(self.count)
+                ])
+
+
+    def draw(self):
+        for row in self.blocks:
+            for block in row:
+                block.draw(self.win)
 
     def heuristic(self, block1, block2):
         return max( abs(block1.r - block2.r), abs(block1.c- block2.c) )
@@ -155,3 +172,54 @@ class Grid:
             if self.path != None:
                 for block in self.path:
                     block.color = colors.path
+
+
+class SideBar:
+
+    def __init__(self, win, grid):
+        self.win = win
+        self.grid_ref = grid
+        self.reset_button = pgw.Button(win, 1000, 500, 150, 50,
+            text="Reset",
+            fontSize=12, margin=10,
+            font=pg.font.SysFont("calibri", 12),
+            inactiveColour=(255, 0, 0),
+            pressedColour=(0, 255, 0), radius=5, onClick=lambda: reset(grid)
+        )
+
+        self.clear_button = pgw.Button(win, 1000, 300, 150, 50,
+            text="Clear",
+            fontSize=12, margin=10,
+            font=pg.font.SysFont("calibri", 12),
+            inactiveColour=(255, 0, 0),
+            pressedColour=(0, 255, 0), radius=5, onClick=lambda: clear(grid)
+        )
+
+        self.animation_speed_slider = pgw.Slider(win, 1000, 800, 200, 20, 
+            min=10, max=120, step=1, initial=45, curved=True,
+        )
+
+        self.block_count_slider = pgw.Slider(win, 1000, 900, 300, 20, 
+            min=4, max=16, step=2, initial=8, curved=True,
+        )
+
+
+
+    def draw(self):
+        self.reset_button.draw()
+        self.clear_button.draw()
+        self.animation_speed_slider.draw()
+        self.block_count_slider.draw()
+
+    def listen(self, events):
+        self.reset_button.listen(events)
+        self.clear_button.listen(events)
+        self.animation_speed_slider.listen(events)
+        self.block_count_slider.listen(events)
+
+        self.grid_ref.animation_speed = int(self.animation_speed_slider.getValue())
+
+        if int(self.block_count_slider.getValue()) != self.grid_ref.count:
+            clear(self.grid_ref)
+            self.grid_ref.count=int(self.block_count_slider.getValue())
+            
