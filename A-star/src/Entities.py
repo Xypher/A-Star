@@ -18,7 +18,15 @@ class Block:
 
     def draw(self, win):
         self.rect=pg.draw.rect(win, self.color, (self.x, self.y, cts.block_width, cts.block_height))
+        font = pg.font.SysFont("Calibri", 16)
+
+        text = str(self.f) if self.f != cts.INF else "INF"
+
+        img = font.render(text , True, (0, 0, 0))
+        win.blit(img, (self.x+cts.block_width//3, self.y+cts.block_height//3))
     
+      
+
     def is_clicked(self, win):
         return self.rect.collidepoint(pg.mouse.get_pos())
 
@@ -61,7 +69,7 @@ class Grid:
         self.animation_running = False
         self.animation_finished = False
         self.pause = False
-        self.animation_speed = 45
+        self.animation_speed = 30
 
         self.build()
 
@@ -108,12 +116,14 @@ class Grid:
         for row in self.blocks:
             for block in row:
                 block.color = colors.passable if block.color != colors.blocked else block.color
+                block.f = cts.INF
         self.source = self.dest = (-1, -1)
 
     def clear(self):
         for row in self.blocks:
             for block in row:
                 block.color = colors.passable
+                block.f = cts.INF
         self.source = self.dest = (-1, -1)
 
 
@@ -180,44 +190,124 @@ class SideBar:
         self.win = win
         self.grid_ref = grid
         
-        self.start_button = pgw.Button(win, 1000, 0, 150, 50,
+        self.start_button = pgw.Button(win, 950, 40, 150, 50,
             text="Start(Space)",
-            fontSize=12, margin=10,
-            font=pg.font.SysFont("calibri", 12),
-            inactiveColour=(255, 0, 0),
-            pressedColour=(0, 255, 0), radius=5, onClick=lambda: start_animation(grid)
+            fontSize=20, margin=10,
+            font=pg.font.SysFont("calibri", 20),
+            inactiveColour=colors.inactive,
+            pressedColour=colors.pressed,
+            hoverColour=colors.hover, radius=5, onClick=lambda: start_animation(grid)
         )
 
-        self.pause_button = pgw.Button(win, 1000, 150, 150, 50,
+        self.pause_button = pgw.Button(win, 1110, 40, 150, 50,
             text="Pause(P)",
-            fontSize=12, margin=10,
-            font=pg.font.SysFont("calibri", 12),
-            inactiveColour=(255, 0, 0),
-            pressedColour=(0, 255, 0), radius=5, onClick=lambda: pause_animation(grid)
+            fontSize=20, margin=10,
+            font=pg.font.SysFont("calibri", 20),
+            inactiveColour=colors.inactive,
+            pressedColour=colors.pressed,
+            hoverColour=colors.hover, radius=5, onClick=lambda: pause_animation(grid)
         )
         
-        self.reset_button = pgw.Button(win, 1000, 500, 150, 50,
+        self.reset_button = pgw.Button(win, 950, 100, 150, 50,
             text="Reset(R)",
-            fontSize=12, margin=10,
-            font=pg.font.SysFont("calibri", 12),
-            inactiveColour=(255, 0, 0),
-            pressedColour=(0, 255, 0), radius=5, onClick=lambda: reset(grid)
+            fontSize=20, margin=10,
+            font=pg.font.SysFont("calibri", 20),
+            inactiveColour=colors.inactive,
+            pressedColour=colors.pressed,
+            hoverColour=colors.hover, radius=5, onClick=lambda: reset(grid)
         )
 
-        self.clear_button = pgw.Button(win, 1000, 300, 150, 50,
+        self.clear_button = pgw.Button(win, 1110, 100, 150, 50,
             text="Clear(C)",
-            fontSize=12, margin=10,
-            font=pg.font.SysFont("calibri", 12),
-            inactiveColour=(255, 0, 0),
-            pressedColour=(0, 255, 0), radius=5, onClick=lambda: clear(grid)
+            fontSize=20, margin=10,
+            font=pg.font.SysFont("calibri", 20),
+            inactiveColour=colors.inactive,
+            pressedColour=colors.pressed,
+            hoverColour=colors.hover, radius=5, onClick=lambda: clear(grid)
         )
 
-        self.animation_speed_slider = pgw.Slider(win, 1000, 800, 200, 20, 
-            min=10, max=120, step=1, initial=45, curved=True,
+        self.speed_label = pgw.Button(win, 1000, 200, 200, 30,
+            text="Animation Speed",
+            fontSize=20, margin=10,
+            font=pg.font.SysFont("calibri", 20),
+            inactiveColour=(125, 125, 125),
+            radius=0, 
         )
 
-        self.block_count_slider = pgw.Slider(win, 1000, 900, 100, 20, 
-            min=4, max=16, step=1, initial=8, curved=True,
+        self.animation_speed_slider = pgw.Slider(win, 1000, 240, 200, 20, 
+            min=10, max=120, step=1, initial=30, curved=True,
+        )
+
+        self.animation_speed_textBox = pgw.Button(win, 1072, 280, 50, 20,
+            text=str(30), fontSize=10, font=pg.font.SysFont("calibri", 10)
+        )
+
+
+        self.count_label = pgw.Button(win, 1000, 340, 200, 30,
+            text="Number of Blocks",
+            fontSize=20, margin=10,
+            font=pg.font.SysFont("calibri", 20),
+            inactiveColour=(125, 125, 125),
+            radius=0, 
+        )
+
+        self.block_count_slider = pgw.Slider(win, 1000, 380, 200, 20, 
+            min=4, max=16, step=1, initial=14, curved=True,
+        )
+
+        self.block_count_textBox = pgw.Button(win, 1072, 420, 50, 20,
+            text=str(14), fontSize=10, font=pg.font.SysFont("calibri", 10)
+        )
+
+
+
+
+        self.hint_text0 = pgw.Button(win, 1000, 500, 300, 60,
+            text="Rigt Mouse click to designate",
+            fontSize=20, margin=10,
+            font=pg.font.SysFont("calibri", 20),
+            inactiveColour=(125, 125, 125),
+            radius=0, 
+        )
+
+        self.hint_text1 = pgw.Button(win, 1000, 540, 300, 60,
+            text="an impassable Block",
+            fontSize=20, margin=10,
+            font=pg.font.SysFont("calibri", 20),
+            inactiveColour=(125, 125, 125),
+            radius=0, 
+        )
+
+        self.hint_text2 = pgw.Button(win, 1000, 580, 300, 60,
+            text="Left Mouse Click to designate",
+            fontSize=20, margin=10,
+            font=pg.font.SysFont("calibri", 20),
+            inactiveColour=(125, 125, 125),
+            radius=0, 
+        )
+
+        self.hint_text3 = pgw.Button(win, 1000, 620, 300, 60,
+            text="the source",
+            fontSize=20, margin=10,
+            font=pg.font.SysFont("calibri", 20),
+            inactiveColour=(125, 125, 125),
+            radius=0, 
+        )
+
+        self.hint_text4 = pgw.Button(win, 1000, 660, 300, 60,
+            text="Middle Mouse Click to designate",
+            fontSize=20, margin=10,
+            font=pg.font.SysFont("calibri", 20),
+            inactiveColour=(125, 125, 125),
+            radius=0, 
+        )
+
+        self.hint_text5 = pgw.Button(win, 1000, 700, 300, 60,
+            text="the destination",
+            fontSize=20, margin=10,
+            font=pg.font.SysFont("calibri", 20),
+            inactiveColour=(125, 125, 125),
+            radius=0, 
         )
 
 
@@ -227,8 +317,19 @@ class SideBar:
         self.pause_button.draw()
         self.reset_button.draw()
         self.clear_button.draw()
+        self.speed_label.draw()
+        self.count_label.draw()
         self.animation_speed_slider.draw()
+        self.animation_speed_textBox.draw()
         self.block_count_slider.draw()
+        self.block_count_textBox.draw()
+        self.hint_text0.draw()
+        self.hint_text1.draw()
+        self.hint_text2.draw()
+        self.hint_text3.draw()
+        self.hint_text4.draw()
+        self.hint_text5.draw()
+        
 
     def listen(self, events):
         self.start_button.listen(events)
@@ -244,3 +345,11 @@ class SideBar:
             clear(self.grid_ref)
             self.grid_ref.count=int(self.block_count_slider.getValue())
             self.grid_ref.build()
+
+        self.animation_speed_textBox=pgw.Button(self.win, 1072, 280, 50, 20,
+            text=str(self.animation_speed_slider.getValue()), fontSize=10, font=pg.font.SysFont("calibri", 10), 
+        )
+
+        self.block_count_textBox=pgw.Button(self.win, 1072, 420, 50, 20,
+            text=str(self.block_count_slider.getValue()), fontSize=10, font=pg.font.SysFont("calibri", 10),
+        )

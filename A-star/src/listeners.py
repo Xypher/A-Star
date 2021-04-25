@@ -77,7 +77,7 @@ def animate(grid):
 
 def start_animation(grid):
     global t
-    if grid.animation_running:
+    if grid.animation_running or grid.source == (-1, -1) or grid.dest == (-1, -1):
         return
     grid.animation_running = True
     grid.pause = False

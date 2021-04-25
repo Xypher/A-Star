@@ -25,7 +25,7 @@ def draw(grid, sidebar, win):
 
 def main():
     win, clock = init()
-    grid: Grid = Grid(win, clock, 8)
+    grid: Grid = Grid(win, clock, 14)
     sidebar: SideBar = SideBar(win, grid)
     
     running = True
