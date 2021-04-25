@@ -3,7 +3,7 @@ import pygame_widgets as pgw
 import constants as cts
 import heapq as hq
 import colors
-from listeners import reset, clear
+from listeners import reset, clear, start_animation, pause_animation
 
 
 class Block:
@@ -179,8 +179,25 @@ class SideBar:
     def __init__(self, win, grid):
         self.win = win
         self.grid_ref = grid
+        
+        self.start_button = pgw.Button(win, 1000, 0, 150, 50,
+            text="Start(Space)",
+            fontSize=12, margin=10,
+            font=pg.font.SysFont("calibri", 12),
+            inactiveColour=(255, 0, 0),
+            pressedColour=(0, 255, 0), radius=5, onClick=lambda: start_animation(grid)
+        )
+
+        self.pause_button = pgw.Button(win, 1000, 150, 150, 50,
+            text="Pause(P)",
+            fontSize=12, margin=10,
+            font=pg.font.SysFont("calibri", 12),
+            inactiveColour=(255, 0, 0),
+            pressedColour=(0, 255, 0), radius=5, onClick=lambda: pause_animation(grid)
+        )
+        
         self.reset_button = pgw.Button(win, 1000, 500, 150, 50,
-            text="Reset",
+            text="Reset(R)",
             fontSize=12, margin=10,
             font=pg.font.SysFont("calibri", 12),
             inactiveColour=(255, 0, 0),
@@ -188,7 +205,7 @@ class SideBar:
         )
 
         self.clear_button = pgw.Button(win, 1000, 300, 150, 50,
-            text="Clear",
+            text="Clear(C)",
             fontSize=12, margin=10,
             font=pg.font.SysFont("calibri", 12),
             inactiveColour=(255, 0, 0),
@@ -199,19 +216,23 @@ class SideBar:
             min=10, max=120, step=1, initial=45, curved=True,
         )
 
-        self.block_count_slider = pgw.Slider(win, 1000, 900, 300, 20, 
-            min=4, max=16, step=2, initial=8, curved=True,
+        self.block_count_slider = pgw.Slider(win, 1000, 900, 100, 20, 
+            min=4, max=16, step=1, initial=8, curved=True,
         )
 
 
 
     def draw(self):
+        self.start_button.draw()
+        self.pause_button.draw()
         self.reset_button.draw()
         self.clear_button.draw()
         self.animation_speed_slider.draw()
         self.block_count_slider.draw()
 
     def listen(self, events):
+        self.start_button.listen(events)
+        self.pause_button.listen(events)
         self.reset_button.listen(events)
         self.clear_button.listen(events)
         self.animation_speed_slider.listen(events)
@@ -222,4 +243,4 @@ class SideBar:
         if int(self.block_count_slider.getValue()) != self.grid_ref.count:
             clear(self.grid_ref)
             self.grid_ref.count=int(self.block_count_slider.getValue())
-            
+            self.grid_ref.build()

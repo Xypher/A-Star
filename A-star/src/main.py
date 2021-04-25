@@ -1,6 +1,6 @@
 import pygame as pg
 import constants as cts
-from Entities import Block, Grid, SideBar
+from Entities import Grid, SideBar
 from listeners import listen
 import colors
 
@@ -10,7 +10,6 @@ def init():
     pg.font.init()
     win = pg.display.set_mode((cts.screen_width, cts.screen_height))
     pg.display.set_caption("A* Algorithm")
-    win.fill(colors.background)
     clock = pg.time.Clock()
 
     return win, clock

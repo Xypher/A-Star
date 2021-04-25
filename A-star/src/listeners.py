@@ -76,12 +76,15 @@ def animate(grid):
 
 
 def start_animation(grid):
+    global t
+    if grid.animation_running:
+        return
     grid.animation_running = True
     grid.pause = False
     t = threading.Thread(target=animate, args=(grid,))
     t.daemon=True
     t.start()
-    return t
+
 
 def reset(grid):
 
@@ -105,11 +108,10 @@ def clear(grid):
 
 
 def handle_keyboard(grid, events, keys):
-    global t
     for event in events:
         if event.type == pg.KEYDOWN:
-            if keys[pg.K_SPACE] and not grid.animation_running:
-                t = start_animation(grid)
+            if keys[pg.K_SPACE]:
+                start_animation(grid)
 
             if keys[pg.K_r]:
                 reset(grid)
