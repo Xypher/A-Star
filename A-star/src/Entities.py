@@ -262,7 +262,7 @@ class SideBar:
 
 
 
-        self.hint_text0 = pgw.Button(win, 1000, 500, 300, 60,
+        self.hint_text0 = pgw.Button(win, 950, 500, 300, 60,
             text="Rigt Mouse click to designate",
             fontSize=20, margin=10,
             font=pg.font.SysFont("calibri", 20),
@@ -270,7 +270,7 @@ class SideBar:
             radius=0, 
         )
 
-        self.hint_text1 = pgw.Button(win, 1000, 540, 300, 60,
+        self.hint_text1 = pgw.Button(win, 950, 540, 300, 60,
             text="an impassable Block",
             fontSize=20, margin=10,
             font=pg.font.SysFont("calibri", 20),
@@ -278,7 +278,7 @@ class SideBar:
             radius=0, 
         )
 
-        self.hint_text2 = pgw.Button(win, 1000, 580, 300, 60,
+        self.hint_text2 = pgw.Button(win, 950, 580, 300, 60,
             text="Left Mouse Click to designate",
             fontSize=20, margin=10,
             font=pg.font.SysFont("calibri", 20),
@@ -286,7 +286,7 @@ class SideBar:
             radius=0, 
         )
 
-        self.hint_text3 = pgw.Button(win, 1000, 620, 300, 60,
+        self.hint_text3 = pgw.Button(win, 950, 620, 300, 60,
             text="the source",
             fontSize=20, margin=10,
             font=pg.font.SysFont("calibri", 20),
@@ -294,7 +294,7 @@ class SideBar:
             radius=0, 
         )
 
-        self.hint_text4 = pgw.Button(win, 1000, 660, 300, 60,
+        self.hint_text4 = pgw.Button(win, 950, 660, 300, 60,
             text="Middle Mouse Click to designate",
             fontSize=20, margin=10,
             font=pg.font.SysFont("calibri", 20),
@@ -302,7 +302,7 @@ class SideBar:
             radius=0, 
         )
 
-        self.hint_text5 = pgw.Button(win, 1000, 700, 300, 60,
+        self.hint_text5 = pgw.Button(win, 950, 700, 300, 60,
             text="the destination",
             fontSize=20, margin=10,
             font=pg.font.SysFont("calibri", 20),
